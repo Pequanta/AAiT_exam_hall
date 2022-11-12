@@ -1,0 +1,10 @@
+import main_surface
+import query_h
+
+def solutionOfproblem(*args):
+	#write your code here!!!
+
+num = int(input())
+result = solutionOfproblem(num)
+analyser = query_h.AnswerHandler.Answers()
+analyser.push_answers(result)
