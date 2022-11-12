@@ -3,13 +3,16 @@ import tkinter.ttk as ttk
 import tkinter.messagebox as ms
 import tkinter.filedialog as filedialog
 
-import main_instructor
+import instructor_final_analyses
 import query_h
-import auth_user
+import user_authentication
 
 from PIL import ImageTk, Image
 
-answer_text = None
+true_answer = None
+name = None
+id_no = None
+section = None
 
 
 class ExamHall(tk.Tk):
@@ -20,7 +23,7 @@ class ExamHall(tk.Tk):
         self.title("Exam Hall")
         self.geometry("1500x800+70+0")
         self.config(bg="black")
-        self.iconbitmap("favicon.ico")
+
         self.resizable(False, False)
         self.title_n = tk.Label(self, text="Welcome To AAiT Programming Exam!", font=("Verdana", 30, "bold"),
                                 bg="black", fg="#80c1ff")
@@ -35,7 +38,7 @@ Any sort of cheating is strictly forbidden\n-----> It is not allowed to use more
         instruction_lbl.place(relx=0.1, rely=0.4)
         self.bg_img = Image.open("image7.webp")
         self.bg_img_int = ImageTk.PhotoImage(self.bg_img)
-        self.introduction_frm = tk.Label(self, image=self.bg_img_int)
+        self.introduction_frm = tk.Label(self, image = self.bg_img_int)
         self.introduction_frm.place(relwidth=1, relheight=1)
 
         lbl_intro = tk.Label(self.introduction_frm,
@@ -45,13 +48,13 @@ Any sort of cheating is strictly forbidden\n-----> It is not allowed to use more
         lbl_intro.place(relx=0.18, rely=0.1)
 
         def upload_file():
-            self.test_file = tk.filedialog.askopenfilename(initialdir="/", type=(["*.txt"]))
+            self.test_file = tk.filedialog.askopenfilename(initialdir="/")
             test_sent = query_h.QueryHandler()
             test_sent.questions_uploaded(self.test_file)
 
         def upload_student_info():
-            self.student_info = tk.filedialog.askopenfilename(initialdir="/", type=(["*.txt"]))
-            student_info = auth_user.checkUserCredentials()
+            self.student_info = tk.filedialog.askopenfilename(initialdir="/")
+            student_info = user_authentication.checkUserCredentials()
             student_info.user_registration(self.student_info)
 
         def continue_app():
@@ -111,19 +114,25 @@ def exam_room(name, id_no, section):
         query_text.config(state="normal")
         query_text.insert(1.0, query_display.show_questions())
         query_text.config(state="disabled")
+        pre_test = open("text_static.txt","r").read()
+        pro_text.insert(1.0, pre_test)
 
-    cmd = ms.showinfo("Start the exam", "Press Yes to start the exam")
+    cmd = ms.showinfo("Start the exam", "Press Ok to start the exam")
     if cmd:
         start()
 
     def submit_ans():
         soln_text = pro_text.get(1.0, "end")
-        pro_text.delete(1.0, "end")
+        pre_test = open("text_static.txt","r").read()
+        pro_text.delete(1.0,"end")
+        pro_text.insert(1.0, pre_test)
+
         analyser = query_h.AnswerHandler()
         analyser.answer_submit(soln_text)
         query_display = query_h.QueryHandler()
         if query_display.current_query > query_display.query_id + 2:
             btn_submit.config(state="disabled")
+        
 
         query_text.config(state="normal")
         query_text.delete(1.0, "end")
@@ -132,42 +141,67 @@ def exam_room(name, id_no, section):
 
     def exiting_tasks():
         closed_frm = tk.Frame(root)
+        closed_frm.config(bg="#80c1ff")
         closed_frm.place(relwidth=1, relheight=1)
-        closed_lbl = tk.Label(closed_frm, text="Only to be used by the instructor", font=("Verdana", 30, "bold"))
+        closed_lbl = tk.Label(closed_frm, text="Only to be used by the instructor", font=("Verdana", 30, "bold"),bg = "#80c1ff")
         closed_lbl.place(relx=0.2, rely=0.15)
-
-        lbl_secret_key = tk.Label(closed_frm, text="Enter the secret Key", font=("Verdana", 25, "italic"))
+        
+        lbl_secret_key = tk.Label(closed_frm, text="Enter the secret Key", font=("Verdana", 25, "italic"),bg = "#80c1ff")
         lbl_secret_key.place(relx=0.15, rely=0.5)
-        entry_secret_key = tk.Entry(closed_frm)
-        entry_secret_key.place(relx=0.6, rely=0.5)
+        entry_secret_key = tk.Entry(closed_frm,font=("Verdana",25,"bold"))
+        entry_secret_key.place(relx=0.6, rely=0.5, relwidth=0.4, relheight=0.07)
 
         upld_answer = tk.Label(closed_frm, text="upload the answer file with .txt extension",
-                               font=("Verdana", 25, "bold"))
+                               font=("Verdana", 25, "bold"),bg = "#80c1ff")
         upld_answer.place(relx=0.05, rely=0.6)
 
         def upload_answer():
-            global answer_text
-            answer_text = filedialog.askopenfilename(initialdir="/", type=(["*.txt"]))
+            global true_answer
+            true_answer = filedialog.askopenfilename(initialdir="/")
 
         upld_answer_btn = tk.Button(closed_frm, text="Upload", font=("Verdana", 25, "bold"), command=upload_answer)
         upld_answer_btn.place(relx=0.7, rely=0.6)
 
         def answer_evaluate():
             if entry_secret_key.get() == ExamHall.secret_key:
-                send_analyse = main_instructor.Analyse_answers(answer_text)
-            print(
-                "This is the secrete key : " + ExamHall.secret_key + " and this is what the user_entered : " + entry_secret_key.get())
-            print(f"Here is the answer text :{answer_text}")
-            print(f"Trial of the evaluations : {send_analyse.answer_anaylse()}")
+                send_analyse = instructor_final_analyses.Analyse_answers()
+                send_analyse.answer_upload(true_answer)
+                send_analyse.answer_anaylse()
+                frm_last_display = tk.Toplevel(closed_frm)
+                frm_last_display.config(bg = "#80c1ff")
+                frm_last_display.geometry("800x700+350+200")
+                frm_last_display.wm_transient(closed_frm)
+                tk.Label(frm_last_display, text = "Student Name", font=("Verdana",25,"bold"),bg = "#80c1ff").place(relx=0.1, rely=0.1)
+                tk.Label(frm_last_display, text = "id No", font=("Verdana",25,"bold"),bg = "#80c1ff").place(relx=0.1, rely=0.15)
+                tk.Label(frm_last_display, text = "Section", font=("Verdana",25,"bold"),bg = "#80c1ff").place(relx=0.1, rely=0.2)
+
+                tk.Label(frm_last_display, text = name, font=("Verdana",25,"bold"),bg = "#80c1ff").place(relx=0.5, rely=0.1)
+                tk.Label(frm_last_display, text = id_no, font=("Verdana",25,"bold"),bg = "#80c1ff").place(relx=0.5, rely=0.15)
+                tk.Label(frm_last_display, text = section, font=("Verdana",25,"bold"),bg = "#80c1ff").place(relx=0.5, rely=0.2)
+
+                tk.Label(frm_last_display, text = "Total Score", font=("Verdana",25,"bold"),bg = "#80c1ff").place(relx=0.1, rely=0.3)
+                score = instructor_final_analyses.Analyse_answers._Score()
+                acquired = instructor_final_analyses.Analyse_answers()
+                total_question = score.return_score()
+                tota_sum = 0
+                for n in score.return_score().keys():
+                    tota_sum += score.return_score()[n]
+                
+
+                tk.Label(frm_last_display, text = str(tota_sum) + "/" + str(len(total_question)), font=("Verdana",25,"bold")).place(relx=0.5, rely=0.3)
+                
+            else:
+                ms.showerror("Invalid key", "Please enter the right key")
+
 
         evaluate_answer = tk.Button(closed_frm, text="Evaluate", font=("Verdana", 25, "bold"),
-                                    command=lambda: answer_evaluate)
+                                    command=answer_evaluate)
         evaluate_answer.place(relx=0.37, rely=0.8)
 
     btn_submit = tk.Button(exam_frm, text="submit", font=("Verdana", 17, "bold"), command=submit_ans)
-    btn_submit.place(relx=0.9, rely=0.9)
+    btn_submit.place(relx=0.85, rely=0.9)
     btn_exit = tk.Button(lbl_frm, text="Exit", font=("Verdana", 20, "bold"), command=exiting_tasks)
-    btn_exit.place(relx=0.8, rely=0.5)
+    btn_exit.place(relx=0.7, rely=0.3)
 
 
 def sign_in(self):
@@ -199,7 +233,7 @@ def sign_in(self):
         name = name_entry.get()
         id_no = id_entry.get()
         section = section_entry.get()
-        check_user_info = auth_user.checkUserCredentials()
+        check_user_info = user_authentication.checkUserCredentials()
 
         if check_user_info.user_authentication(name, id_no) == "Only user name":
             ms.showerror("Invalid id number", "Try again")
