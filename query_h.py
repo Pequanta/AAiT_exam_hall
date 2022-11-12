@@ -52,8 +52,8 @@ class AnswerHandler(QueryHandler):
     def __init__(self):
         self.answer = None
 
-    class _Answers:
-        """Answers from the user are taken here and stored for later analyse in the dictionary if _answer_with_id"""
+    class Answers:
+        """Answers from the user are taken here and stored for later analyse in the dictionary if answer_with_id"""
 
         def __init__(self):
             self._total_answers = 0
@@ -63,18 +63,18 @@ class AnswerHandler(QueryHandler):
         def push_answers(self, answer):
             AnswerHandler.answer_of_student[QueryHandler.current_query - 1] = answer
             trial = AnswerHandler.answer_of_student[QueryHandler.current_query - 1]
-
+            see = AnswerHandler.Answers()
+            print(see.return_total_students())
+            
         def return_total_students(self):
             return AnswerHandler.answer_of_student
 
         def return_peak_index(self):
             return QueryHandler.query_id
-
         def empty(self):
             return len(self._total_queries) == 0
 
-    def answer_submit(self, answer):
+    def answer_submit(self,answer):
         QueryHandler.current_query += 1
-        self.answer = answer
-        send_answer = self._Answers()
-        send_answer.push_answers(self.answer)
+        exec(answer)
+        
