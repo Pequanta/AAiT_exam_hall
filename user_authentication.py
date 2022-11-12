@@ -1,4 +1,4 @@
-
+import sqlite3 as sql
 
 
 class checkUserCredentials:
@@ -42,7 +42,6 @@ class checkUserCredentials:
         self.student_file = open(student_file).read()
         self.student_info_list = self.student_file.split("\n")
         self.student_register = checkUserCredentials._Students_info()
-        for i in range(len(self.student_info_list)):
+        for i in range(len(self.student_info_list)-1):
             single_student_info = self.student_info_list[i].split("-")
             self.student_register.push_student(single_student_info[0].strip(), single_student_info[1].strip())
-
