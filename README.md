@@ -10,24 +10,25 @@ To run the source code:
 
 
 
-#Introduction
+#Introduction:
     The programme was assigned as ExamHall in order to be more descriptive.Its usage is to offer a protatype for making fully developed, self-contained and
 easly usable examination system.It has 5 surfaces in which there are particular tasks that can be carried out either by the instructor or the student.
 In the first surface there are two upload buttons using which the instructor inserts the test file and the student list file. Both files should be in 
 extension of .txt and the test file should be in the following format:
 example(test.txt):
+
 1.First question
-
 2.Second question
-
 3. And so on!
 
 !! This format is required so that the written code can identify one question from another one using the method '.split("\n")'
 And also the student list file should be in the following foramt:
 
+
 student1 - id_number1
 student2 - id_number2
 and so on.
+
 
 Ther is also the secret_key_entry in this page. This task is needed so that only the teacher will analyse the final result on the last page and no one else
 would have access to do so.
