@@ -33,10 +33,9 @@ and so on.
 Ther is also the secret_key_entry in this page. This task is needed so that only the teacher will analyse the final result on the last page and no one else
 would have access to do so.
 
-    In the next page the student is given a caution which are general in exam hall.After hitting the 'sign in' button the authentication page will be poped
-out.In this page the user is required to enter his/her name and his/her id number(This are what are used in order to authenticate the user).When the user 
-hitsthe 'Log in' button, the 'checkUserCredentials()' class of the 'user_authentication' module is called.If the user is not authentic, she/he will recieve succecic
-errors implying what gone wrong.If qualified , then the user will be led to the exam page.
+    In the next page the student is given a caution which are general in exam hall.After hitting the 'sign in' button the authentication page will be popedout.In this page the user is required to enter his/her name and his/her id number(This are what are used in order to authenticate the user).When the user hits the 'Log in' button the user will be authenticated. If he/she passes the authentication the user will be led to the exam page or else succesive errors will be poped out implying what gone wrong.
+    After the user completed the exam the will click on the exit button and the rest of the task will be hold by the instructor.In this last section the 
+ instructor will insert his secret_key, 
 
 
 
